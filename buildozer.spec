@@ -16,12 +16,11 @@ requirements = python3,flet
 # Разрешения
 android.permissions = INTERNET
 
-# Стабильные версии Android SDK
+# ТОЛЬКО СТАБИЛЬНЫЕ ВЕРСИИ (не preview!)
 android.api = 33
 android.minapi = 21
 android.ndk = 25b
 android.archs = arm64-v8a, armeabi-v7a
-android.sdk = 33
 android.accept_all_licenses = True
 
 [buildozer]
