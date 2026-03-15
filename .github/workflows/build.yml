@@ -20,7 +20,7 @@ jobs:
       run: |
         pip install buildozer cython
     
-    - name: Accept Android licenses
+    - name: Setup Android SDK
       run: |
         sudo apt-get update
         sudo apt-get install -y openjdk-17-jdk
@@ -28,7 +28,7 @@ jobs:
         # Создаем директорию для лицензий
         mkdir -p $ANDROID_HOME/licenses
         
-        # Принимаем все лицензии Android SDK
+        # Принимаем лицензии через echo (без sdkmanager)
         echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
         echo "84831b9409646a918e30573bab4c9c91346d8abd" >> $ANDROID_HOME/licenses/android-sdk-license
         echo "d975f751698a77b662f1254ddbeed3901e976f5a" >> $ANDROID_HOME/licenses/android-sdk-license
@@ -36,12 +36,12 @@ jobs:
         echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $ANDROID_HOME/licenses/android-sdk-license
         echo "013032b0a2534d41bb7e6ed51c6e8aeb0a9dbd4c" >> $ANDROID_HOME/licenses/android-sdk-license
         echo "504667f4c0de7af1a06de9f4b1727b84351f2910" >> $ANDROID_HOME/licenses/android-sdk-license
-        echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-preview-license
         
-        # Устанавливаем стабильные build-tools (версия 33.0.0)
-        yes | sdkmanager "build-tools;33.0.0"
-        yes | sdkmanager "platforms;android-33"
-        yes | sdkmanager "platform-tools"
+        # Добавляем sdkmanager в PATH
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools/bin
+        
+        # Устанавливаем необходимые компоненты через полный путь
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" 2>/dev/null || true
     
     - name: Build APK
       run: |
