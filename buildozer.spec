@@ -16,7 +16,7 @@ requirements = python3,flet
 # Разрешения
 android.permissions = INTERNET
 
-# Стабильные версии (НЕ preview!)
+# Стабильные версии Android SDK
 android.api = 33
 android.minapi = 21
 android.ndk = 25b
