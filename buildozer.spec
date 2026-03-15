@@ -9,12 +9,19 @@ version.code = 1
 orientation = portrait
 osx.python_version = 3
 osx.kivy_version = 2.1.0
+
+# Требования
 requirements = python3,flet
+
+# Разрешения
 android.permissions = INTERNET
+
+# Стабильные версии (НЕ preview!)
 android.api = 31
 android.minapi = 21
 android.ndk = 25b
 android.archs = arm64-v8a, armeabi-v7a
+android.sdk = 31
 
 [buildozer]
 log_level = 2
