@@ -17,11 +17,12 @@ requirements = python3,flet
 android.permissions = INTERNET
 
 # Стабильные версии (НЕ preview!)
-android.api = 31
+android.api = 33
 android.minapi = 21
 android.ndk = 25b
 android.archs = arm64-v8a, armeabi-v7a
-android.sdk = 31
+android.sdk = 33
+android.accept_all_licenses = True
 
 [buildozer]
 log_level = 2
