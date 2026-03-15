@@ -18,12 +18,27 @@ jobs:
     
     - name: Install Flet
       run: |
-        pip install flet
+        pip install flet flet-cli
     
-    - name: Build APK with Flet
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.41.4'
+        channel: 'stable'
+        cache: true
+    
+    - name: Accept licenses
+      run: |
+        yes | flutter doctor --android-licenses || true
+    
+    - name: Build APK with Flet (non-interactive)
       run: |
         cd $GITHUB_WORKSPACE
-        flet build apk
+        # Устанавливаем переменные для авто-подтверждения
+        export FLET_CLI_AUTO_ACCEPT=1
+        export CI=true
+        # Строим APK в неинтерактивном режиме
+        echo "y" | flet build apk
     
     - name: Upload APK
       uses: actions/upload-artifact@v4
