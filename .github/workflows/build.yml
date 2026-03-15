@@ -16,39 +16,17 @@ jobs:
       with:
         python-version: '3.10'
     
-    - name: Install dependencies
+    - name: Install Flet
       run: |
-        pip install buildozer cython
+        pip install flet
     
-    - name: Setup Android SDK
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y openjdk-17-jdk
-        
-        # Создаем директорию для лицензий
-        mkdir -p $ANDROID_HOME/licenses
-        
-        # Принимаем ВСЕ лицензии (копируем хэши)
-        echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
-        echo "84831b9409646a918e30573bab4c9c91346d8abd" >> $ANDROID_HOME/licenses/android-sdk-license
-        echo "d975f751698a77b662f1254ddbeed3901e976f5a" >> $ANDROID_HOME/licenses/android-sdk-license
-        echo "8933bad161af4178b1185d1a37fbf41ea5269c55" >> $ANDROID_HOME/licenses/android-sdk-license
-        echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $ANDROID_HOME/licenses/android-sdk-license
-        echo "013032b0a2534d41bb7e6ed51c6e8aeb0a9dbd4c" >> $ANDROID_HOME/licenses/android-sdk-license
-        echo "504667f4c0de7af1a06de9f4b1727b84351f2910" >> $ANDROID_HOME/licenses/android-sdk-license
-        
-        # Устанавливаем стабильные компоненты БЕЗ yes команды
-        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-        sdkmanager --licenses <<< "y" || true
-        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" "cmdline-tools;latest" "ndk;25.2.9519653"
-    
-    - name: Build APK
+    - name: Build APK with Flet
       run: |
         cd $GITHUB_WORKSPACE
-        buildozer android debug
+        flet build apk
     
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-debug
-        path: bin/*.apk
+        name: app-release
+        path: build/**/*-release.apk
