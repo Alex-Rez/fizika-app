@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
     
@@ -21,6 +21,13 @@ jobs:
         pip install buildozer cython
         sudo apt-get update
         sudo apt-get install -y python3-pip build-essential git python3-dev libffi-dev libssl-dev libgdk-pixbuf2.0-dev libmpc-dev libmpfr-dev libgmp-dev autoconf libtool pkg-config openjdk-11-jdk
+    
+    - name: Accept Android licenses
+      run: |
+        mkdir -p $ANDROID_HOME/licenses
+        echo "8933bad161af4178b1185d1a37fbf41ea5269c55" >> $ANDROID_HOME/licenses/android-sdk-license
+        echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $ANDROID_HOME/licenses/android-sdk-license
+        echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" >> $ANDROID_HOME/licenses/android-sdk-license
     
     - name: Build APK
       run: |
