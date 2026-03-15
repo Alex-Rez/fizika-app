@@ -20,7 +20,7 @@ jobs:
       run: |
         pip install buildozer cython
     
-    - name: Setup Android SDK
+    - name: Setup Android SDK (stable versions only)
       run: |
         sudo apt-get update
         sudo apt-get install -y openjdk-17-jdk
@@ -28,7 +28,7 @@ jobs:
         # Создаем директорию для лицензий
         mkdir -p $ANDROID_HOME/licenses
         
-        # Принимаем ВСЕ лицензии Android SDK
+        # Принимаем ВСЕ лицензии Android SDK (все возможные хэши)
         echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
         echo "84831b9409646a918e30573bab4c9c91346d8abd" >> $ANDROID_HOME/licenses/android-sdk-license
         echo "d975f751698a77b662f1254ddbeed3901e976f5a" >> $ANDROID_HOME/licenses/android-sdk-license
@@ -42,10 +42,12 @@ jobs:
         export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools/bin
         
         # Устанавливаем СТАБИЛЬНЫЕ компоненты (НЕ preview!)
+        # Используем только стабильные версии
         yes | sdkmanager "platform-tools"
         yes | sdkmanager "platforms;android-33"
         yes | sdkmanager "build-tools;33.0.2"
         yes | sdkmanager "cmdline-tools;latest"
+        yes | sdkmanager "ndk;25.2.9519653"
     
     - name: Build APK
       run: |
