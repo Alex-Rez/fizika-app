@@ -20,7 +20,7 @@ jobs:
       run: |
         pip install buildozer cython
     
-    - name: Setup Android SDK
+    - name: Setup Android SDK (STABLE ONLY)
       run: |
         sudo apt-get update
         sudo apt-get install -y openjdk-17-jdk
@@ -41,16 +41,23 @@ jobs:
         # Добавляем cmdline-tools в PATH
         export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools/bin
         
-        # Устанавливаем ТОЛЬКО СТАБИЛЬНЫЕ компоненты
-        yes | sdkmanager "platform-tools"
-        yes | sdkmanager "platforms;android-33"
-        yes | sdkmanager "build-tools;33.0.2"
-        yes | sdkmanager "cmdline-tools;latest"
-        yes | sdkmanager "ndk;25.2.9519653"
+        # Устанавливаем ТОЛЬКО СТАБИЛЬНЫЕ компоненты (НЕ preview!)
+        # Это КРИТИЧНО: устанавливаем ДО запуска buildozer
+        yes | sdkmanager "platform-tools" --licenses
+        yes | sdkmanager "platforms;android-33" --licenses
+        yes | sdkmanager "build-tools;33.0.2" --licenses
+        yes | sdkmanager "cmdline-tools;latest" --licenses
+        yes | sdkmanager "ndk;25.2.9519653" --licenses
+        
+        # Создаем symlink, чтобы buildozer нашёл stable build-tools
+        mkdir -p $ANDROID_HOME/build-tools
+        ln -sf $ANDROID_HOME/build-tools/33.0.2 $ANDROID_HOME/build-tools/33.0.2
     
     - name: Build APK
       run: |
         cd $GITHUB_WORKSPACE
+        # Очищаем кэш, чтобы buildozer не подтянул preview
+        rm -rf ~/.buildozer/android/platform/android-sdk/build-tools/*rc*
         buildozer android debug
     
     - name: Upload APK
