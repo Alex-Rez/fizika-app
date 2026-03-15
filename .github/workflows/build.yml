@@ -20,7 +20,7 @@ jobs:
       run: |
         pip install buildozer cython
     
-    - name: Setup Android SDK (STABLE ONLY)
+    - name: Setup Android SDK
       run: |
         sudo apt-get update
         sudo apt-get install -y openjdk-17-jdk
@@ -28,7 +28,7 @@ jobs:
         # Создаем директорию для лицензий
         mkdir -p $ANDROID_HOME/licenses
         
-        # Принимаем ВСЕ лицензии (все возможные хэши)
+        # Принимаем ВСЕ лицензии (копируем хэши)
         echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
         echo "84831b9409646a918e30573bab4c9c91346d8abd" >> $ANDROID_HOME/licenses/android-sdk-license
         echo "d975f751698a77b662f1254ddbeed3901e976f5a" >> $ANDROID_HOME/licenses/android-sdk-license
@@ -36,28 +36,15 @@ jobs:
         echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $ANDROID_HOME/licenses/android-sdk-license
         echo "013032b0a2534d41bb7e6ed51c6e8aeb0a9dbd4c" >> $ANDROID_HOME/licenses/android-sdk-license
         echo "504667f4c0de7af1a06de9f4b1727b84351f2910" >> $ANDROID_HOME/licenses/android-sdk-license
-        echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-preview-license
         
-        # Добавляем cmdline-tools в PATH
-        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools/bin
-        
-        # Устанавливаем ТОЛЬКО СТАБИЛЬНЫЕ компоненты (НЕ preview!)
-        # Это КРИТИЧНО: устанавливаем ДО запуска buildozer
-        yes | sdkmanager "platform-tools" --licenses
-        yes | sdkmanager "platforms;android-33" --licenses
-        yes | sdkmanager "build-tools;33.0.2" --licenses
-        yes | sdkmanager "cmdline-tools;latest" --licenses
-        yes | sdkmanager "ndk;25.2.9519653" --licenses
-        
-        # Создаем symlink, чтобы buildozer нашёл stable build-tools
-        mkdir -p $ANDROID_HOME/build-tools
-        ln -sf $ANDROID_HOME/build-tools/33.0.2 $ANDROID_HOME/build-tools/33.0.2
+        # Устанавливаем стабильные компоненты БЕЗ yes команды
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        sdkmanager --licenses <<< "y" || true
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" "cmdline-tools;latest" "ndk;25.2.9519653"
     
     - name: Build APK
       run: |
         cd $GITHUB_WORKSPACE
-        # Очищаем кэш, чтобы buildozer не подтянул preview
-        rm -rf ~/.buildozer/android/platform/android-sdk/build-tools/*rc*
         buildozer android debug
     
     - name: Upload APK
